@@ -17,10 +17,10 @@ resource "proxmox_vm_qemu" "test-server-apache" {
   }
 
   network {
-    model  = "virtio"
-    bridge = "vmbr0"
+    model  = var.network_model   # Use the network model from variables
+    bridge = var.network_bridge  # Use the network bridge from variables
   }
 
-  # Use the IP and gateway from variables
+  # Use the IP and gateway from variables for network configuration
   ipconfig0 = "ip=${var.proxmox_ip},gw=${var.gateway}"
 }
