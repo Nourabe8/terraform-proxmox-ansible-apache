@@ -1,0 +1,37 @@
+- name: Install Apache on the VM
+  hosts: all
+  remote_user: terrweb3
+  become: yes
+  tasks:
+    - name: Wait for apt lock to be released
+      shell: |
+        while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+          echo "Waiting for dpkg lock to be released..."
+          sleep 5
+        done
+      ignore_errors: yes
+
+    - name: Update the package cache
+      apt:
+        update_cache: yes
+
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
+
+    - name: Start and enable Apache
+      systemd:
+        name: apache2
+        state: started
+        enabled: yes
+          # - name: Welcome massage on page
+          #copy:
+          # content: "<html><body><h1>Welcome to Noura!</h1></body></html>"
+          # dest: /var/www/html/index.html
+          # mode: '0644'
+
+    - name: Ensure Apache is running
+      service:
+        name: apache2
+        state: restarted
